@@ -1,23 +1,18 @@
-import { defineComponent, PropType, reactive, toRaw } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { MainLayout } from '../../layouts/MainLayout';
 import { Button } from '../../shared/Button';
 import { EmojiSelect } from '../../shared/EmojiSelect';
 import { Icon } from '../../shared/Icon';
 import { Rules, validate } from '../../shared/validate';
-import s from './TagCreate.module.scss';
+import s from './Tag.module.scss';
 export const TagCreate = defineComponent({
-  props: {
-    name: {
-      type: String as PropType<string>
-    }
-  },
   setup: (props, context) => {
     const formData = reactive({
       name: '',
       sign: '',
     })
-    const errors = reactive<{[k in keyof typeof formData]?: string[]}>({})
-    const onSubmit = (event: Event) => {
+    const errors = reactive<{ [k in keyof typeof formData]?: string[] }>({})
+    const onSubmit = (e: Event) => {
       const rules: Rules<typeof formData> = [
         { key: 'name', type: 'required', message: '必填' },
         { key: 'name', type: 'pattern', regex: /^.{1,4}$/, message: '只能填 1 到 4 个字符' },
@@ -28,7 +23,7 @@ export const TagCreate = defineComponent({
         sign: undefined
       })
       Object.assign(errors, validate(formData, rules))
-      event.preventDefault()
+      e.preventDefault()
     }
     return () => (
       <MainLayout>{{
@@ -51,7 +46,7 @@ export const TagCreate = defineComponent({
               <label class={s.formLabel}>
                 <span class={s.formItem_name}>符号 {formData.sign}</span>
                 <div class={s.formItem_value}>
-                  <EmojiSelect v-model:selected={formData.sign} class={[s.formItem, s.emojiList, s.error]} />
+                  <EmojiSelect v-model={formData.sign} class={[s.formItem, s.emojiList, s.error]} />
                 </div>
                 <div class={s.formItem_errorHint}>
                   <span>{errors['sign'] ? errors['sign'][0] : '　'}</span>
