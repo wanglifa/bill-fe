@@ -3,13 +3,14 @@ import { emojiList } from './emojiList';
 import s from './EmojiSelect.module.scss';
 export const EmojiSelect = defineComponent({
   props: {
-    name: {
-      type: String as PropType<string>
+    modelValue: {
+      type: String
     },
-    selected: {
-      type: String as PropType<string>
+    onUpdateModelValue: {
+      type: Function as PropType<(value: string) => void>
     }
   },
+  emits: ['update:modelValue'],
   setup: (props, context) => {
     console.log(emojiList)
     const refSelected = ref(1)
@@ -34,7 +35,11 @@ export const EmojiSelect = defineComponent({
       ['运动', ['sport', 'game']],
     ]
     const onClickEmoji = (emoji: string) => {
-      context.emit('update:selected', emoji)
+      if (props.onUpdateModelValue) {
+        props.onUpdateModelValue(emoji)
+      } else {
+        context.emit('update:modelValue', emoji)
+      }
     }
     const emojis = computed(() => {
       const selectedItem = table[refSelected.value][1]
@@ -44,7 +49,7 @@ export const EmojiSelect = defineComponent({
             onClick={() => onClickEmoji(item)}>{item}</li>)
       )
     })
-    const handleClickTag = (index) => {
+    const handleClickTag = (index: number) => {
       console.log(index, 'iii')
       refSelected.value = index
     }
