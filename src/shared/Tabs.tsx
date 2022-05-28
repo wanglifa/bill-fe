@@ -9,11 +9,8 @@ export const Tabs = defineComponent({
       type: String as PropType<string>,
       required: false,
     },
-    onUpdateSelected: {
-      type: Function as PropType<(name: string) => void>,
-      required: false,
-    }
   },
+  emits: ['update:selected'],
   setup: (props, context) => {
     return () => {
       const tabs = context.slots.default?.()
@@ -48,7 +45,7 @@ export const Tab = defineComponent({
   props: {
     name: {
       type: String as PropType<string>
-    },
+    }
   },
   setup: (props, context) => {
     return () => (
