@@ -38,13 +38,13 @@ export class Time {
   firstDayOfMonth() {
     return new Time(new Date(this.date.getFullYear(), this.date.getMonth(), 1, 0, 0, 0))
   }
-  firstDayofYear() {
+  firstDayOfYear() {
     return new Time(new Date(this.date.getFullYear(), 0, 1, 0, 0, 0))
   }
   lastDayOfMonth() {
     return new Time(new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0, 0, 0, 0))
   }
-  lastDayofYear() {
+  lastDayOfYear() {
     return new Time(new Date(this.date.getFullYear() + 1, 0, 1, 0, 0, 0))
   }
   add(amount: number, unit: 'day' | 'month' | 'year' | 'hour' | 'minute' | 'second' | 'millisecond') {
@@ -74,7 +74,10 @@ export class Time {
         break
       case 'millisecond':
         date.setMilliseconds(date.getMilliseconds() + amount)
-        break
+        break;
+        default:
+          throw new Error('Time.add: unknown unit')
     }
+    return new Time(date)
   }
 }
