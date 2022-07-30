@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import s from './Button.module.scss';
 
 interface Props {
@@ -15,15 +15,39 @@ export const Button = defineComponent({
     },
     type: {
       type: String as PropType<'submit' | 'button'>,
-      default: 'button'    
+      default: 'button'
     },
     disabled: {
-      type: Boolean as PropType<boolean>
+      type: Boolean,
+      default: false
+    },
+    autoSelfDisabled: {
+      type: Boolean,
+      default: true
     }
   },
   setup: (props, context) => {
+    const selfDisabled = ref(false)
+    const _disabled = computed(() => {
+      if(props.autoSelfDisabled === false){
+        return props.disabled
+      }
+      console.log(selfDisabled.value, 'selfDisabled.value')
+      if(selfDisabled.value){
+        return true
+      }else{
+        return props.disabled
+      }
+    })
+    const onClick = (event: MouseEvent) => {
+      props.onClick?.(event)
+      selfDisabled.value = true
+      setTimeout(()=>{
+        selfDisabled.value = false
+      },500)
+    }
     return () => (
-      <button disabled={props.disabled} type={props.type} class={[s.button, s[props.level]]} onClick={props.onClick}>
+      <button disabled={_disabled.value} type={props.type} class={[s.button, s[props.level]]} onClick={onClick}>
         {context.slots.default?.()}
       </button>
     )

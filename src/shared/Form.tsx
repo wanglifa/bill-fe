@@ -3,6 +3,7 @@ import { computed, defineComponent, PropType, ref, VNode } from 'vue';
 import { Button } from './Button';
 import { EmojiSelect } from './EmojiSelect';
 import s from './Form.module.scss';
+import { getFriendlyError } from './getFriendlyError';
 import { Time } from './time';
 export const Form = defineComponent({
   props: {
@@ -37,19 +38,18 @@ export const FormItem = defineComponent({
     options: Array as PropType<Array<{ value: string, text: string }>>,
     onClick: Function as PropType<() => void>,
     countFrom: {
-      type: Number as PropType<number>,
-      default: 3
-    }
+      type: Number,
+      default: 60
+    },
+    disabled: Boolean,
   },
   emits: ['update:modelValue'],
   setup: (props, context) => {
     const refDateVisible = ref(false)
-    const count = ref(props.countFrom)
     const timer = ref<number>()
-    const isCounting = computed(() => {
-      return !!timer.value
-    })
-    const startCount = () => {
+    const count = ref<number>(props.countFrom)
+    const isCounting = computed(() => !!timer.value)
+    const startCount = () =>
       timer.value = setInterval(() => {
         count.value -= 1
         if (count.value === 0) {
@@ -58,10 +58,7 @@ export const FormItem = defineComponent({
           count.value = props.countFrom
         }
       }, 1000)
-    }
-    context.expose({
-      startCount
-    })
+    context.expose({ startCount })
     const content = computed(() => {
       switch (props.type) {
         case 'text':
@@ -73,13 +70,13 @@ export const FormItem = defineComponent({
         case 'emojiSelect':
           return <EmojiSelect
             modelValue={props.modelValue?.toString()}
-            onUpdate:modelValue={value => context.emit('update:modelValue', value)}
+            onUpdateModelValue={value => context.emit('update:modelValue', value)}
             class={[s.formItem, s.emojiList, s.error]} />
         case 'validationCode':
           return <>
             <input class={[s.formItem, s.input, s.validationCodeInput]}
               placeholder={props.placeholder} />
-            <Button disabled={isCounting.value} onClick={props.onClick} class={[s.formItem, s.button, s.validationCodeButton]}>
+            <Button disabled={isCounting.value || props.disabled} onClick={props.onClick} class={[s.formItem, s.button, s.validationCodeButton]}>
               {isCounting.value ? `${count.value}秒后可重新发送` : '发送验证码'}
             </Button>
           </>
@@ -118,7 +115,7 @@ export const FormItem = defineComponent({
             {content.value}
           </div>
           <div class={s.formItem_errorHint}>
-            <span>{props.error ?? '　'}</span>
+            <span>{props.error ? getFriendlyError(props.error) : '　'}</span>
           </div>
         </label>
       </div>
