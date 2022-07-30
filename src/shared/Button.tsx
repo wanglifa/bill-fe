@@ -23,7 +23,7 @@ export const Button = defineComponent({
     },
     autoSelfDisabled: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   setup: (props, context) => {
@@ -40,8 +40,10 @@ export const Button = defineComponent({
       }
     })
     const onClick = (event: MouseEvent) => {
+      console.log('xxxx')
       props.onClick?.(event)
       selfDisabled.value = true
+      console.log('iiiuuu')
       setTimeout(()=>{
         selfDisabled.value = false
       },500)
