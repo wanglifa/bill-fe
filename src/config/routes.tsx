@@ -29,7 +29,10 @@ export const routes: RouteRecordRaw[] = [
       { path: '2', name: "Welcome2", components: { main: Second, footer: SecondActions }, },
       { path: '3', name: "Welcome3", components: { main: Third, footer: ThirdActions }, },
       { path: '4', name: "Welcome4", components: { main: Forth, footer: ForthActions }, },
-    ]
+    ],
+    beforeEnter: (to, from, next) => {
+      localStorage.getItem('skipFeatures') === 'yes' ? next('/start') : next()
+    }
   },
   { path: '/start', component: StartPage },
   {
