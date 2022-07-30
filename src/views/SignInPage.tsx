@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { defineComponent, PropType, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useBool } from '../hooks/useBool';
 import { MainLayout } from '../layouts/MainLayout';
 import { Button } from '../shared/Button';
@@ -10,6 +11,8 @@ import { hasError, validate } from '../shared/validate';
 import s from './SignInPage.module.scss';
 export const SignInPage = defineComponent({
   setup: (props, context) => {
+    const router = useRouter()
+    const route = useRoute()
     const formData = reactive({
       email: 'wanglifa1995@qq.com',
       code: ''
@@ -19,7 +22,7 @@ export const SignInPage = defineComponent({
       code: []
     })
     const refValidationCode = ref<any>()
-    const { ref: refDisabled, toggle, on: disabled, off: enable } = useBool(false)
+    const { ref: refDisabled, toggle, on: disabled, off: enable } = useBool()
     const onSubmit = async (e: Event) => {
       console.log('submit')
       e.preventDefault()
@@ -32,11 +35,11 @@ export const SignInPage = defineComponent({
         { key: 'code', type: 'required', message: '必填' },
       ]))
       if(!hasError(errors)){
-        console.log('8888')
         const response = await http.post<{jwt: string}>('/session', formData)
         .catch(onError)
         localStorage.setItem('jwt', response.data.jwt)
-        history.push('/')
+        const returnTo = route.query.return_to?.toString()
+        router.push(returnTo || '/')
       }
     }
     const onError = (error: any) => {
