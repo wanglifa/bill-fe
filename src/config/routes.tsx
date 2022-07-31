@@ -17,6 +17,7 @@ import { StatisticsPage } from "../views/StatisticsPage";
 import { StartPage } from "../views/StartPage";
 import { TagPage } from "../views/TagPage";
 import { Welcome } from "../views/Welcome";
+import { http } from "../shared/Http";
 
 export const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/welcome' },
@@ -40,7 +41,13 @@ export const routes: RouteRecordRaw[] = [
     children: [
       { path: '', component: ItemList },
       { path: 'create', component: ItemCreate },
-    ]
+    ],
+    beforeEnter: async (to, from, next) => {
+      await http.get('/me').catch(() => {
+        next('/sign_in?return_to=' + to.path)
+      })
+      next()
+    }
   },
   {
     path: '/tags', component: TagPage,
