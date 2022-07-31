@@ -28,21 +28,23 @@ export class Http {
 }
 
 const mock = (response: AxiosResponse) => {
+  console.log(111)
   if (location.hostname !== 'localhost'
     && location.hostname !== '127.0.0.1'
-    && location.hostname !== '192.168.3.57') { return false }
+    ) { return false }
+    console.log(333)
   switch (response.config?.params?._mock) {
-    case 'tagIndex':
-      [response.status, response.data] = mockTagIndex(response.config)
-      return true
-    case 'itemCreate':
-      [response.status, response.data] = mockItemCreate(response.config)
-      return true
-    case 'itemIndex':
-      [response.status, response.data] = mockItemIndex(response.config)
-      return true
-    case 'tagCreate':
-      [response.status, response.data] = mockTagCreate(response.config)
+    // case 'tagIndex':
+    //   [response.status, response.data] = mockTagIndex(response.config)
+    //   return true
+    // case 'itemCreate':
+    //   [response.status, response.data] = mockItemCreate(response.config)
+    //   return true
+    // case 'itemIndex':
+    //   [response.status, response.data] = mockItemIndex(response.config)
+    //   return true
+    // case 'tagCreate':
+    //   [response.status, response.data] = mockTagCreate(response.config)
     case 'session':
       [response.status, response.data] = mockSession(response.config)
       return true
@@ -62,8 +64,10 @@ http.instance.interceptors.request.use(config => {
 
 http.instance.interceptors.response.use((response) => {
   mock(response)
+  console.log(222)
   return response
 }, (error) => {
+  console.log(error, 'err')
   if (mock(error.response)) {
     return error.response
   } else {
