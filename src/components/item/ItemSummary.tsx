@@ -92,6 +92,7 @@ export const ItemSummary = defineComponent({
             </div>
           </li>
           <li>
+
             <div class={s.sign}>
               <span>X</span>
             </div>
