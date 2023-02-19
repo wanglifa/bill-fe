@@ -1,5 +1,6 @@
 import { defineComponent, onMounted, PropType, ref } from 'vue';
 import { MainLayout } from '../../layouts/MainLayout';
+import { BackIcon } from '../../shared/BackIcon';
 import { Button } from '../../shared/Button';
 import { http } from '../../shared/Http';
 import { Icon } from '../../shared/Icon';
@@ -29,7 +30,7 @@ export const ItemCreate = defineComponent({
     return () => (
       <MainLayout class={s.layout}>{{
         title: () => '记一笔',
-        icon: () => <Icon name="left" class={s.navIcon} />,
+        icon: () => <BackIcon/>,
         default: () => <>
           <div class={s.wrapper}>
             <Tabs v-model:selected={refKind.value} class={s.tabs}>
