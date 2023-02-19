@@ -6,10 +6,11 @@ export const EmojiSelect = defineComponent({
     modelValue: {
       type: String
     },
+    onUpdateModelValue: {
+      type: Function as PropType<(emoji: string) => void>
+    }
   },
-  emits: ['update:modelValue'],
   setup: (props, context) => {
-    console.log(emojiList)
     const refSelected = ref(1)
     const table: [string, string[]][] = [
       ['表情', ['face-smiling', 'face-affection', 'face-tongue', 'face-hand',
@@ -31,6 +32,9 @@ export const EmojiSelect = defineComponent({
       ]],
       ['运动', ['sport', 'game']],
     ]
+    const onClickTab = (index: number) => {
+      refSelected.value = index
+    }
     const onClickEmoji = (emoji: string) => {
       if (props.onUpdateModelValue) {
         props.onUpdateModelValue(emoji)
@@ -46,14 +50,12 @@ export const EmojiSelect = defineComponent({
             onClick={() => onClickEmoji(item)}>{item}</li>)
       )
     })
-    const handleClickTag = (index: number) => {
-      console.log(index, 'iii')
-      refSelected.value = index
-    }
     return () => (
       <div class={s.emojiList}>
         <nav>
-          {table.map((item, index) => <span onClick={() => handleClickTag(index)}>{item[0]}</span>)}
+          {table.map((item, index) =>
+            <span class={index === refSelected.value ? s.selected : ''}
+              onClick={() => onClickTab(index)}>{item[0]}</span>)}
         </nav>
         <ol>
           {emojis.value}
@@ -61,4 +63,4 @@ export const EmojiSelect = defineComponent({
       </div>
     )
   }
-}) 
+})

@@ -24,3 +24,11 @@ type Resources<T = any> = {
     count: number
   }
 } 
+
+type Resource<T> = {
+  resource: T;
+};
+
+type ResourceError = {
+  errors: Record<string, string[]>;
+};
