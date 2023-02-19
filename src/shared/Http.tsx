@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { mockSession, mockTagIndex } from "../mock/mock";
+import { mockItemCreate, mockSession, mockTagIndex, mockTagShow } from "../mock/mock";
 
 type GetConfig = Omit<AxiosRequestConfig, 'params' | 'url' | 'method'>
 type PostConfig = Omit<AxiosRequestConfig, 'url' | 'data' | 'method'>
@@ -28,25 +28,21 @@ export class Http {
 }
 
 const mock = (response: AxiosResponse) => {
-  console.log(111)
   if (location.hostname !== 'localhost'
     && location.hostname !== '127.0.0.1'
-    ) { return false }
-    console.log(333)
+    && location.hostname !== '192.168.3.57') { return false }
   switch (response.config?.params?._mock) {
     case 'tagIndex':
       [response.status, response.data] = mockTagIndex(response.config)
       return true
-    // case 'itemCreate':
-    //   [response.status, response.data] = mockItemCreate(response.config)
-    //   return true
-    // case 'itemIndex':
-    //   [response.status, response.data] = mockItemIndex(response.config)
-    //   return true
-    // case 'tagCreate':
-    //   [response.status, response.data] = mockTagCreate(response.config)
     case 'session':
       [response.status, response.data] = mockSession(response.config)
+      return true
+    case 'itemCreate':
+      [response.status, response.data] = mockItemCreate(response.config)
+      return true
+    case 'tagShow':
+      [response.status, response.data] = mockTagShow(response.config)
       return true
   }
   return false
@@ -64,18 +60,21 @@ http.instance.interceptors.request.use(config => {
 
 http.instance.interceptors.response.use((response) => {
   mock(response)
-  console.log(222)
-  return response
-}, (error) => {
-  console.log(error, 'err')
-  if (mock(error.response)) {
-    return error.response
+  if (response.status >= 400) {
+    throw { response }
   } else {
+    return response
+  }
+}, (error) => {
+  mock(error.response)
+  if (error.response.status >= 400) {
     throw error
+  } else {
+    return error.response
   }
 })
 http.instance.interceptors.response.use(
-  response => response,
+  response => { return response },
   error => {
     if (error.response) {
       const axiosError = error as AxiosError
