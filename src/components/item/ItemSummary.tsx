@@ -2,6 +2,7 @@ import { defineComponent, onMounted, PropType, ref } from 'vue'
 import { Button } from '../../shared/Button'
 import { FloatButton } from '../../shared/FloatButton'
 import { http } from '../../shared/Http'
+import { Datetime } from '../../shared/Datetime'
 import { Money } from '../../shared/Money'
 import s from './ItemSummary.module.scss'
 export const ItemSummary = defineComponent({
@@ -62,7 +63,7 @@ export const ItemSummary = defineComponent({
                       <span class={s.tag}>{item.tags_id[0]}</span>
                       <span class={s.amount}>￥<Money value={item.amount}/></span>
                     </div>
-                    <div class={s.time}>{item.happen_at}</div>
+                    <div class={s.time}><Datetime value={item.happen_at} /></div>
                   </div>
                 </li>
               ))}
